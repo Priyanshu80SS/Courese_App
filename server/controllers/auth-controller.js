@@ -21,9 +21,13 @@ const register = async (req, resp) => {
       return resp.status(400).json({ msg: "email already exists" });
     }
 
-    await User.create({ username, email, phone, password });
+    const userCreated = await User.create({ username, email, phone, password });
 
-    resp.status(200).json({ msg: req.body });
+    resp.status(201).json({
+      msg: "registration successful",
+      token: await userCreated.generateToken(),
+      userId: userCreated._id.toString(),
+    });
   } catch (error) {
     resp.status(400).send({ msg: "page not found" });
   }
